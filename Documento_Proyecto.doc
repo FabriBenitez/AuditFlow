@@ -1,0 +1,76 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font-family: 'Calibri', sans-serif; font-size: 12pt; line-height: 1.5; }
+  h1 { color: #10B981; font-size: 24pt; border-bottom: 2px solid #2EC4B6; padding-bottom: 5px; }
+  h2 { color: #FF5D73; font-size: 18pt; margin-top: 20px; }
+  h3 { color: #333333; font-size: 14pt; }
+  p { margin-bottom: 15px; }
+  .highlight { background-color: #FFC857; font-weight: bold; padding: 2px 5px; }
+  ul { margin-bottom: 15px; }
+  li { margin-bottom: 5px; }
+</style>
+</head>
+<body>
+
+<h1>Resumen del Proyecto: AuditFlow / Foco</h1>
+<p><strong>Fecha:</strong> Octubre 2026</p>
+<p><strong>Objetivo del Documento:</strong> Definir la propuesta de valor, la arquitectura y los módulos principales de la plataforma SaaS para creadores de contenido y marcas.</p>
+
+<h2>1. El Problema</h2>
+<p>La mayoría de los negocios, emprendedores y creadores de contenido enfrentan tres barreras principales al intentar crecer en redes sociales (TikTok, Instagram Reels):</p>
+<ul>
+    <li><strong>Bloqueo Creativo:</strong> No saben qué grabar ni cómo adaptar las tendencias a su nicho específico.</li>
+    <li><strong>Ejecución Deficiente:</strong> Graban sin guion, con mala iluminación y sin ganchos (hooks) claros, lo que resulta en retención nula.</li>
+    <li><strong>Falta de Estrategia:</strong> Publican al azar sin medir la "salud" real de su perfil, perdiendo oportunidades de conversión.</li>
+</ul>
+
+<h2>2. La Solución (El Producto)</h2>
+<p>Una plataforma <strong>SaaS impulsada por Inteligencia Artificial</strong> que actúa como un Director Creativo de bolsillo. El sistema no solo audita el estado actual de la marca, sino que genera "Guías de Rodaje" (Shooting Kits) precisas, respaldadas por ejemplos de videos virales reales, para que el usuario solo tenga que darle al botón de grabar.</p>
+
+<h2>3. Módulos Principales</h2>
+
+<h3>A. Auditoría Inteligente (Health Score)</h3>
+<p>Un sistema de diagnóstico que analiza el perfil del usuario (Instagram/TikTok).</p>
+<ul>
+    <li><strong>Puntuación General (0-100):</strong> Evalúa el estado del perfil.</li>
+    <li><strong>Checklist de Errores Críticos:</strong> Detecta si falta un Link en la Bio, si la biografía no vende el beneficio, o si la frecuencia de posteo es muy baja.</li>
+    <li><strong>Plan de Acción:</strong> Entrega pasos inmediatos para optimizar el embudo de ventas del perfil antes de lanzar un video viral.</li>
+</ul>
+
+<h3>B. Studio IA (Generador de Shooting Kits)</h3>
+<p>El núcleo creativo de la app. El usuario ingresa su producto (ej. "Velas de Soja Artesanales") y la IA escupe un plan de grabación exacto.</p>
+<ul>
+    <li><strong>Estrategia y Ganchos (Hooks):</strong> Provee las frases exactas de los primeros 3 segundos para retener a la audiencia.</li>
+    <li><strong>Lista de Tomas (Shot List):</strong> Un paso a paso de los planos que hay que grabar (ej. Plano macro, plano cenital).</li>
+    <li><strong>Iluminación y Edición:</strong> Instrucciones de dónde poner la luz y qué ritmo de cortes usar.</li>
+    <li><strong><span class="highlight">La Ventaja Injusta (Video Embeds):</span></strong> Cada recomendación de la IA viene acompañada de un reproductor de TikTok real integrado en la app. El usuario puede <em>ver</em> el estilo de video, el gancho o la iluminación exacta que debe replicar.</li>
+</ul>
+
+<h3>C. Planificador (Tracker)</h3>
+<p>Un tablero operativo (estilo Kanban/Bento) para organizar el flujo de trabajo.</p>
+<ul>
+    <li>Columnas dinámicas: <em>Ideas, Para Grabar, En Edición, Listo para Publicar.</em></li>
+    <li>Permite que el creador pase de "Tengo una idea" a "Video publicado" sin salir del ecosistema.</li>
+</ul>
+
+<h2>4. Diferenciadores Técnicos y de Mercado</h2>
+<ul>
+    <li><strong>Base de Datos Curada (No Scrapeo Ciego):</strong> En lugar de pedirle a la IA textos genéricos, la plataforma utiliza una biblioteca propia de "Plantillas Virales" curadas (ASMR, POV, Casos de Estudio). La IA simplemente funciona como un <em>Matchmaker</em> entre el producto del usuario y los formatos que <strong>ya sabemos que funcionan</strong>.</li>
+    <li><strong>Estética "Anti-Slop" (High-End UI):</strong> A diferencia del software estándar generado por IA, la plataforma cuenta con un diseño de interfaz premium, minimalista e industrial. Utiliza una paleta de colores funcional (Esmeralda, Turquesa, Naranja, Sandía y Mostaza) enfocada en productividad.</li>
+</ul>
+
+<h2>5. Modelo de Negocio (Roadmap de Crecimiento)</h2>
+<p>El producto está diseñado para escalar hacia un modelo de suscripción (SaaS):</p>
+<ol>
+    <li><strong>Fase Freemium:</strong> Usuarios pueden generar 2-3 guías gratis y hacer su auditoría.</li>
+    <li><strong>Suscripción Mensual:</strong> Acceso ilimitado a la base de datos de formatos virales, tracker integrado, y generación de guiones ilimitados.</li>
+    <li><strong>Crecimiento Automatizado:</strong> Un script automático de IA analiza las tendencias semanales de TikTok y alimenta la base de datos de la plataforma, asegurando que los usuarios siempre tengan acceso a los formatos más nuevos del mercado sin intervención manual del equipo.</li>
+</ol>
+
+<hr>
+<p><em>Documento generado estratégicamente para estructurar el desarrollo y validación del proyecto.</em></p>
+
+</body>
+</html>
