@@ -1208,7 +1208,7 @@ Genera ÚNICAMENTE un objeto JSON válido con esta estructura:
   try {
     if (!apiKey) throw new Error('No API key');
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.8-flash',
       contents: [promptText],
       config: {
         responseMimeType: 'application/json',
@@ -1439,7 +1439,7 @@ Devuelve ÚNICAMENTE un JSON con esta estructura:
   try {
     if (!apiKey) throw new Error('No API key');
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.8-flash',
       contents: [promptText],
       config: { responseMimeType: 'application/json' }
     });
