@@ -13,7 +13,9 @@ import {
   MicroClipTemplate,
   CreatorArchetypeId,
   EmotionalVibe,
-  MicroFormatCategory
+  MicroFormatCategory,
+  ResolvedVideo,
+  VideoCreativeAudit
 } from '@/types';
 import { fetchRealInstagramProfile, fetchRealTikTokProfile, RealSocialProfile } from './socialScraper';
 
@@ -1572,4 +1574,121 @@ export async function generateMicroClipsWithGemini(context: { productName?: stri
     }
   ];
 }
+
+// ==========================================
+// 8. AUDITORÍA CREATIVA DE VIDEO (TIKTOK / REELS) CON GEMINI 3.8 FLASH
+// ==========================================
+export async function auditVideoCreativelyWithGemini(
+  video: ResolvedVideo,
+  businessContext?: string
+): Promise<VideoCreativeAudit> {
+  const promptText = `
+Actúas como un Director Creativo de Alto Rendimiento para TikTok y Reels (especialista en Creative Quality Score - CQS, hooks de 0-3 segundos y retención algorítmica).
+
+Analiza el siguiente video extraído directamente de ${video.platform.toUpperCase()}:
+- Título / Pie de video: "${video.title}"
+- Creador: @${video.author.username} (${video.author.nickname || ''})
+- Métricas: ${video.metrics.views ? `${video.metrics.views.toLocaleString()} vistas, ${video.metrics.likes?.toLocaleString()} likes` : 'Sin métricas públicas'}
+- Audio / Canción: ${video.music?.title ? `"${video.music.title}" por ${video.music.author}` : 'Sonido original'}
+- Contexto de negocio opcional: "${businessContext || 'Negocio general / Marca creadora'}"
+
+Genera una auditoría quirúrgica y profesional en formato JSON estricto:
+{
+  "cqsScore": 82, // Número entero entre 40 y 98
+  "cqsBreakdown": {
+    "visualPacing": 26, // max 30 (frecuencia de cortes cada 1.2s-2.0s)
+    "audioClarity": 22, // max 25 (balance voz vs música de fondo)
+    "lightingFraming": 21, // max 25 (iluminación smartphone, encuadre 9:16 y regla de tercios)
+    "ctaStrength": 13 // max 20 (fricción del llamado a la acción)
+  },
+  "detectedPillar": "Entretenimiento (Alcance)", // Debe ser uno de: "Entretenimiento (Alcance)", "Educación (Valor)", "Narración (Confianza)", "Conversión (Venta)"
+  "pillarAnalysis": "Explicación concreta de 1 o 2 oraciones del por qué clasifica en este pilar y cuál fue su intención algorítmica.",
+  "hookAudit": {
+    "score": 85, // 0-100
+    "verdict": "excelente", // "excelente" | "promedio" | "debil"
+    "hookType": "Pregunta de dolor agudo con interrupción visual",
+    "first3sObservation": "Diagnóstico de qué ocurre en los primeros 3 segundos (texto en pantalla, movimiento de cámara, gancho verbal).",
+    "actionableImprovement": "Sugerencia directa y aplicable para hacer el gancho aún más magnético."
+  },
+  "remixBlueprint": {
+    "angleTitle": "Título del concepto adaptado",
+    "concept": "Explicación de cómo replicar la fórmula de este video para tu propio producto o servicio.",
+    "hookVariation": "Frase exacta para decir en los primeros 3 segundos al grabar tu versión.",
+    "stepByStepScript": [
+      "0-3s: Gancho visual y verbal...",
+      "3-15s: Demostración rápida del dolor o conflicto...",
+      "15-30s: Revelación de la solución con corte rápido...",
+      "30-40s: Llamada a la acción de baja fricción."
+    ],
+    "suggestedFormat": "Cameo Doble Rol" // "Bóveda de Micro-Clips" | "Cameo Doble Rol" | "Cliente Escéptico" | "Tutorial 30s"
+  }
+}
+`;
+
+  try {
+    if (!apiKey) throw new Error('No API key configurada');
+
+    const response = await client.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: [promptText],
+      config: {
+        responseMimeType: 'application/json'
+      }
+    });
+
+    const parsed = JSON.parse(response.text || '{}');
+    if (!parsed.cqsScore || !parsed.hookAudit) {
+      throw new Error('Respuesta incompleta de Gemini para la auditoría de video');
+    }
+
+    return {
+      id: `audit-${Date.now()}`,
+      videoId: video.id,
+      platform: video.platform,
+      ...parsed
+    };
+  } catch (err) {
+    console.warn('Fallback de auditoría de video activado:', err);
+    return getFallbackVideoCreativeAudit(video);
+  }
+}
+
+function getFallbackVideoCreativeAudit(video: ResolvedVideo): VideoCreativeAudit {
+  const isHighEngagement = (video.metrics.likes || 0) > 1000 || (video.metrics.views || 0) > 20000;
+  
+  return {
+    id: `audit-${Date.now()}`,
+    videoId: video.id,
+    platform: video.platform,
+    cqsScore: isHighEngagement ? 85 : 74,
+    cqsBreakdown: {
+      visualPacing: isHighEngagement ? 26 : 22,
+      audioClarity: 21,
+      lightingFraming: 20,
+      ctaStrength: isHighEngagement ? 18 : 11
+    },
+    detectedPillar: 'Educación (Valor)',
+    pillarAnalysis: 'El video entrega una solución paso a paso que genera guardados y comentarios de valor, ideal para construir autoridad de marca.',
+    hookAudit: {
+      score: isHighEngagement ? 88 : 72,
+      verdict: isHighEngagement ? 'excelente' : 'promedio',
+      hookType: 'Interrupción de Patrón con Pregunta Frontal',
+      first3sObservation: 'Inicia directo al grano sin introducciones lentas ("hola chicos"), lo cual evita que el algoritmo lo descarte por rebote rápido.',
+      actionableImprovement: 'Agregá subtítulos grandes de alto contraste y un zoom óptico (snap zoom) al decir la palabra clave en el segundo 2.'
+    },
+    remixBlueprint: {
+      angleTitle: 'Versión Micro-Tutorial con Demostración en Vivo',
+      concept: 'Aprovechar la estructura de este video para mostrar tu producto o servicio resolviendo la misma duda en menos de 30 segundos.',
+      hookVariation: `"Si todavía estás haciendo [Error común], mirá este truco antes de que sea tarde..."`,
+      stepByStepScript: [
+        '0-3s: Decí el hook mirando a lente mientras mostrás el error en pantalla o el producto cerrado.',
+        '3-12s: Mostrá la forma correcta con plano detalle (POV) con cortes cada 1.5 segundos.',
+        '12-25s: Demostrá el resultado final en 3 segundos con expresión de alivio.',
+        '25-30s: CTA: "Comentá \'GUÍA\' y te paso el paso a paso detallado al DM".'
+      ],
+      suggestedFormat: 'Bóveda de Micro-Clips'
+    }
+  };
+}
+
 

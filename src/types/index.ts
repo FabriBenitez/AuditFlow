@@ -372,3 +372,65 @@ export interface AuditReport {
   actionPlan?: ActionPlanDeliverable;
 }
 
+// ==========================================
+// 6. INGESTA Y REPRODUCCIÓN DE VIDEOS (TIKTOK & INSTAGRAM REELS)
+// ==========================================
+export type VideoPlatform = 'tiktok' | 'instagram';
+
+export interface ResolvedVideo {
+  id: string;
+  platform: VideoPlatform;
+  originalUrl: string;
+  title: string;
+  author: {
+    username: string;
+    nickname?: string;
+    avatarUrl?: string;
+  };
+  coverUrl: string;
+  videoUrl?: string; // Direct clean MP4 stream URL (e.g. TikTok)
+  embedUrl?: string; // Iframe URL for Instagram or fallback player
+  duration?: number;
+  metrics: {
+    views?: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+  };
+  music?: {
+    title?: string;
+    author?: string;
+  };
+}
+
+export interface VideoHookAudit {
+  score: number; // 0 - 100
+  verdict: 'excelente' | 'promedio' | 'debil';
+  hookType: string;
+  first3sObservation: string;
+  actionableImprovement: string;
+}
+
+export interface VideoCreativeAudit {
+  id: string;
+  videoId: string;
+  platform: VideoPlatform;
+  cqsScore: number; // 0 - 100
+  cqsBreakdown: {
+    visualPacing: number;
+    audioClarity: number;
+    lightingFraming: number;
+    ctaStrength: number;
+  };
+  detectedPillar: 'Entretenimiento (Alcance)' | 'Educación (Valor)' | 'Narración (Confianza)' | 'Conversión (Venta)';
+  pillarAnalysis: string;
+  hookAudit: VideoHookAudit;
+  remixBlueprint: {
+    angleTitle: string;
+    concept: string;
+    hookVariation: string;
+    stepByStepScript: string[];
+    suggestedFormat: 'Bóveda de Micro-Clips' | 'Cameo Doble Rol' | 'Cliente Escéptico' | 'Tutorial 30s';
+  };
+}
+

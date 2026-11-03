@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BarChart3, AlertCircle, Copy, Check, ArrowRight, CheckSquare, Sparkles } from 'lucide-react';
+import { BarChart3, AlertCircle, Copy, Check, ArrowRight, CheckSquare, Sparkles, Film, UserCheck } from 'lucide-react';
 import { sampleAuditReport } from '@/lib/mockData';
 import { AuditReport, BusinessArchetype } from '@/types';
+import { VideoInspector } from './VideoInspector';
 
 function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -38,6 +39,7 @@ const LOADING_STEPS = [
 ];
 
 export function AuditScreen() {
+  const [activeAuditMode, setActiveAuditMode] = useState<'video' | 'profile'>('video');
   const [igUsername, setIgUsername] = useState('');
   const [ttUsername, setTtUsername] = useState('');
   const [selectedArchetype, setSelectedArchetype] = useState<BusinessArchetype | 'auto'>('auto');
@@ -113,8 +115,44 @@ export function AuditScreen() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-8 mt-2">
-      {/* Buscador Superior */}
-      <div className="bg-white border border-black/5 rounded-2xl p-6 space-y-6">
+      {/* Selector de Modo: Video Inspector vs Auditoría de Cuenta */}
+      <div className="flex items-center gap-2 p-1.5 bg-neutral-900 border border-neutral-800 rounded-2xl w-full sm:w-fit backdrop-blur-md shadow-lg">
+        <button
+          type="button"
+          onClick={() => setActiveAuditMode('video')}
+          className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all btn-press ${
+            activeAuditMode === 'video'
+              ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-950/40'
+              : 'text-neutral-400 hover:text-white'
+          }`}
+        >
+          <Film className="w-3.5 h-3.5 text-cyan-300" />
+          <span>Inspector de Video (Reels & TikTok)</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-400/20 text-emerald-300 font-bold tracking-wide">
+            ZERO-UPLOAD
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveAuditMode('profile')}
+          className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all btn-press ${
+            activeAuditMode === 'profile'
+              ? 'bg-neutral-800 text-white shadow-md'
+              : 'text-neutral-400 hover:text-white'
+          }`}
+        >
+          <UserCheck className="w-3.5 h-3.5 text-neutral-300" />
+          <span>Auditoría de Perfil / Cuenta</span>
+        </button>
+      </div>
+
+      {activeAuditMode === 'video' ? (
+        <VideoInspector />
+      ) : (
+        <>
+          {/* Buscador Superior */}
+          <div className="bg-white border border-black/5 rounded-2xl p-6 space-y-6">
         <div>
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">
             Auditoría de Perfil
@@ -588,6 +626,8 @@ export function AuditScreen() {
             )}
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
