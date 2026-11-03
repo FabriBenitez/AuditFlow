@@ -3,19 +3,18 @@
 import React, { useState } from 'react';
 import { 
   Play, 
+  Pause,
   Sparkles, 
   Flame, 
   Eye, 
   Heart, 
-  ExternalLink, 
   X, 
   Compass, 
   Zap, 
-  ArrowRight, 
   Check, 
   Copy,
-  Repeat,
-  Volume2
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { CURATED_VIRAL_BENCHMARKS } from '@/lib/viralRecommendationsData';
 import { ViralRecommendedVideo, ContentPillarType, BusinessArchetype } from '@/types';
@@ -39,30 +38,32 @@ function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
 }
 
 const PILLAR_FILTERS: { id: ContentPillarType | 'all'; label: string; icon: string }[] = [
-  { id: 'all', label: 'Todos los Pilares', icon: '🌟' },
-  { id: 'entertainment', label: 'Entretenimiento (Alcance)', icon: '🚀' },
-  { id: 'education', label: 'Educación (Valor)', icon: '💡' },
-  { id: 'storytelling', label: 'Narración (Confianza)', icon: '🤝' },
-  { id: 'conversion', label: 'Conversión (Ventas)', icon: '💰' },
+  { id: 'all', label: 'Todos', icon: '🌟' },
+  { id: 'entertainment', label: 'Entretenimiento', icon: '🚀' },
+  { id: 'education', label: 'Educación', icon: '💡' },
+  { id: 'storytelling', label: 'Narración', icon: '🤝' },
+  { id: 'conversion', label: 'Ventas', icon: '💰' },
 ];
 
 const NICHE_FILTERS: { id: BusinessArchetype | 'all'; label: string }[] = [
   { id: 'all', label: 'Todos los Rubros' },
-  { id: 'ecommerce_physical', label: '🛍️ E-Commerce Físico' },
-  { id: 'saas_tech_digital', label: '💻 Digital & SaaS' },
+  { id: 'ecommerce_physical', label: '🛍️ E-Commerce' },
+  { id: 'saas_tech_digital', label: '💻 Digital / SaaS' },
   { id: 'personal_brand_creator', label: '👤 Creator Founder' },
-  { id: 'local_gastro_retail', label: '📍 Local & Gastro' },
-  { id: 'b2b_services_high_ticket', label: '💼 Servicios B2B' },
+  { id: 'local_gastro_retail', label: '📍 Gastro / Local' },
+  { id: 'b2b_services_high_ticket', label: '💼 B2B High-Ticket' },
 ];
 
 export function ViralRadarFeed() {
   const [selectedPillar, setSelectedPillar] = useState<ContentPillarType | 'all'>('all');
   const [selectedNiche, setSelectedNiche] = useState<BusinessArchetype | 'all'>('all');
-  const [activeVideoModal, setActiveVideoModal] = useState<ViralRecommendedVideo | null>(null);
 
-  // Remix Generator State inside Modal
+  // Video actualmente en reproducción inline
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
+
+  // ID del video con panel de Remix abierto
+  const [activeRemixId, setActiveRemixId] = useState<string | null>(null);
   const [userProductName, setUserProductName] = useState('');
-  const [isGeneratingRemix, setIsGeneratingRemix] = useState(false);
   const [generatedScript, setGeneratedScript] = useState<{
     hook: string;
     steps: string[];
@@ -76,34 +77,38 @@ export function ViralRadarFeed() {
     return true;
   });
 
-  const handleOpenModal = (video: ViralRecommendedVideo) => {
-    setActiveVideoModal(video);
-    setGeneratedScript(null);
-    setUserProductName('');
+  const togglePlayInline = (videoId: string) => {
+    if (playingVideoId === videoId) {
+      setPlayingVideoId(null);
+    } else {
+      setPlayingVideoId(videoId);
+    }
   };
 
-  const handleGenerateCustomRemix = async () => {
-    if (!activeVideoModal) return;
-    setIsGeneratingRemix(true);
-
-    try {
-      // Simulación inmediata o llamada a IA para adaptar la fórmula viral
-      const productName = userProductName.trim() || 'tu producto o servicio';
-      
-      // Adaptación de fórmula con el motor creativo
-      setGeneratedScript({
-        hook: `"${activeVideoModal.hook0to3s.hookText.replace(/este producto|esto|mi celular/gi, productName)}"`,
-        steps: [
-          `0-3s: Grabá en plano detalle (a 15cm) mostrando ${productName} mientras decís el gancho sin rodeos.`,
-          `3-12s: Demostrá en vivo la objeción más dura de tu cliente con cortes rápidos cada 1.5s.`,
-          `12-25s: Mostrá el resultado final satisfactorio con luz natural y expresión de alivio.`,
-          `25-30s: Llamado a la acción: "Comentá '${productName.slice(0, 4).toUpperCase()}' y te mando la guía completa al DM".`
-        ],
-        cta: `Comentá la palabra clave para recibir información directa.`
-      });
-    } finally {
-      setIsGeneratingRemix(false);
+  const toggleRemix = (videoId: string) => {
+    if (activeRemixId === videoId) {
+      setActiveRemixId(null);
+      setGeneratedScript(null);
+    } else {
+      setActiveRemixId(videoId);
+      setGeneratedScript(null);
+      setUserProductName('');
     }
+  };
+
+  const handleGenerateCustomRemix = (video: ViralRecommendedVideo) => {
+    const productName = userProductName.trim() || 'tu producto o servicio';
+
+    setGeneratedScript({
+      hook: `"${video.hook0to3s.hookText.replace(/este producto|esto|mi celular/gi, productName)}"`,
+      steps: [
+        `0-3s: Grabá en plano detalle (a 15cm) mostrando ${productName} mientras decís el gancho sin rodeos.`,
+        `3-12s: Demostrá en vivo la objeción más dura de tu cliente con cortes rápidos cada 1.5s.`,
+        `12-25s: Mostrá el resultado final satisfactorio con luz natural y expresión de alivio.`,
+        `25-30s: Llamado a la acción: "Comentá '${productName.slice(0, 4).toUpperCase()}' y te mando la guía al DM".`
+      ],
+      cta: `Comentá la palabra clave para recibir información directa.`
+    });
   };
 
   const copyScriptToClipboard = () => {
@@ -115,342 +120,270 @@ export function ViralRadarFeed() {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12 mt-2">
-      {/* Hero Header */}
-      <div className="rounded-3xl border border-neutral-800 bg-gradient-to-b from-neutral-900/90 to-neutral-950/80 p-6 sm:p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-watermelon-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-3">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              RADAR EN VIVO • RECOMENDACIONES DE VIDEOS VIRALES
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Feed de Videos Virales Recomendados
-            </h2>
-            <p className="text-sm sm:text-base text-neutral-400 mt-2 leading-relaxed">
-              Descubrí qué videos superaron el millón de vistas en TikTok e Instagram, míralos reproduciéndose en vivo y usá su fórmula exacta adaptada a tu producto en un clic.
-            </p>
+    <div className="space-y-5 max-w-5xl mx-auto pb-28 px-2 sm:px-4 mt-1">
+      
+      {/* Header Compacto Optimizado para Móvil */}
+      <div className="rounded-2xl sm:rounded-3xl border border-neutral-800 bg-neutral-900/90 p-4 sm:p-6 backdrop-blur-xl shadow-xl">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            RADAR VIRAL EN VIVO
           </div>
-
-          <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
-            <div className="p-3.5 rounded-2xl bg-black/40 border border-neutral-800 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-watermelon-500/20 border border-watermelon-500/30 flex items-center justify-center text-watermelon-400 font-bold">
-                <Flame className="w-5 h-5 text-watermelon-400" />
-              </div>
-              <div>
-                <div className="text-xs text-neutral-400 font-medium">Fórmula del Gancho</div>
-                <div className="text-sm font-bold text-white">0 a 3 Segundos (Hook)</div>
-              </div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-black/40 border border-neutral-800 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold">
-                <Compass className="w-5 h-5 text-cyan-400" />
-              </div>
-              <div>
-                <div className="text-xs text-neutral-400 font-medium">Clasificados por</div>
-                <div className="text-sm font-bold text-white">4 Pilares de Contenido</div>
-              </div>
-            </div>
-          </div>
+          <span className="text-xs text-neutral-400 font-mono">
+            {filteredVideos.length} videos
+          </span>
         </div>
 
-        {/* Pillar Filter Pills */}
-        <div className="mt-8 pt-6 border-t border-neutral-800/80 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
-              Filtrar por Pilar de Redes Sociales:
-            </span>
-            <span className="text-xs text-cyan-400 font-mono">
-              {filteredVideos.length} videos encontrados
-            </span>
-          </div>
+        <h2 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight">
+          Recomendaciones de Videos Virales
+        </h2>
+        <p className="text-xs sm:text-sm text-neutral-400 mt-1 leading-relaxed">
+          Tocá cualquier video para reproducirlo verticalmente en 9:16 y usá su gancho de 0 a 3s adaptado a tu negocio.
+        </p>
 
-          <div className="flex flex-wrap gap-2">
-            {PILLAR_FILTERS.map((p) => {
-              const isSelected = selectedPillar === p.id;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setSelectedPillar(p.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all btn-press ${
-                    isSelected
-                      ? 'bg-white text-black shadow-lg shadow-white/10 font-bold scale-[1.02]'
-                      : 'bg-neutral-800/80 hover:bg-neutral-800 text-neutral-300 border border-neutral-700/50'
-                  }`}
-                >
-                  <span>{p.icon}</span>
-                  <span>{p.label}</span>
-                </button>
-              );
-            })}
-          </div>
+        {/* Filtros de Pilares (Scroll horizontal táctil) */}
+        <div className="mt-4 pt-3 border-t border-neutral-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          {PILLAR_FILTERS.map((p) => {
+            const isSelected = selectedPillar === p.id;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setSelectedPillar(p.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1.5 transition-all btn-press ${
+                  isSelected
+                    ? 'bg-white text-black shadow-md font-bold'
+                    : 'bg-neutral-800/80 text-neutral-300 border border-neutral-700/60'
+                }`}
+              >
+                <span>{p.icon}</span>
+                <span>{p.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-          {/* Niche Filter Pills */}
-          <div className="flex flex-wrap gap-1.5 pt-2">
-            {NICHE_FILTERS.map((n) => {
-              const isSelected = selectedNiche === n.id;
-              return (
-                <button
-                  key={n.id}
-                  onClick={() => setSelectedNiche(n.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                    isSelected
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-medium'
-                      : 'bg-black/30 hover:bg-black/50 text-neutral-400 border border-neutral-800'
-                  }`}
-                >
-                  {n.label}
-                </button>
-              );
-            })}
-          </div>
+        {/* Filtros de Rubro (Scroll horizontal táctil) */}
+        <div className="mt-2 flex items-center gap-1 overflow-x-auto no-scrollbar pb-1">
+          {NICHE_FILTERS.map((n) => {
+            const isSelected = selectedNiche === n.id;
+            return (
+              <button
+                key={n.id}
+                onClick={() => setSelectedNiche(n.id)}
+                className={`px-2.5 py-1 rounded-lg text-[11px] shrink-0 transition-all ${
+                  isSelected
+                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-medium'
+                    : 'bg-black/30 text-neutral-400 border border-neutral-800'
+                }`}
+              >
+                {n.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Video Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredVideos.map((video) => (
-          <div
-            key={video.id}
-            className="group rounded-3xl border border-neutral-800/80 bg-neutral-900/60 hover:border-neutral-700 overflow-hidden flex flex-col justify-between transition-all duration-200 hover:shadow-2xl hover:shadow-cyan-950/20"
-          >
-            {/* Top Preview Card (aspect 16/9 thumbnail with 9:16 indicator) */}
-            <div className="relative aspect-[16/10] bg-black overflow-hidden cursor-pointer" onClick={() => handleOpenModal(video)}>
-              <img
-                src={video.coverUrl}
-                alt={video.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-              />
+      {/* Lista de Videos en Feed Vertical (Estilo Reels/TikTok) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {filteredVideos.map((video) => {
+          const isPlaying = playingVideoId === video.id;
+          const isRemixOpen = activeRemixId === video.id;
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-              {/* Badges Top */}
-              <div className="absolute top-3 inset-x-3 flex items-center justify-between">
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-black/70 backdrop-blur-md text-white border border-neutral-700">
-                  {video.platform === 'tiktok' ? (
-                    <><TikTokIcon className="w-3 h-3 text-cyan-400" /> TikTok</>
+          return (
+            <div
+              key={video.id}
+              className="rounded-2xl sm:rounded-3xl border border-neutral-800 bg-neutral-900/80 overflow-hidden flex flex-col justify-between shadow-lg"
+            >
+              {/* Visor de Video 9:16 o Portada */}
+              <div className="relative aspect-[9/14] bg-black overflow-hidden flex items-center justify-center">
+                {isPlaying ? (
+                  // Video en reproducción directa inline
+                  video.videoUrl ? (
+                    <video
+                      src={video.videoUrl}
+                      controls
+                      autoPlay
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    <><InstagramIcon className="w-3 h-3 text-pink-400" /> Reel</>
-                  )}
-                </span>
+                    <iframe
+                      src={video.embedUrl}
+                      className="w-full h-full border-0"
+                      allowFullScreen
+                      scrolling="no"
+                    />
+                  )
+                ) : (
+                  // Portada previa con botón de play gigante
+                  <div 
+                    className="relative w-full h-full cursor-pointer group"
+                    onClick={() => togglePlayInline(video.id)}
+                  >
+                    <img
+                      src={video.coverUrl}
+                      alt={video.title}
+                      className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white border border-white/20">
-                  {video.nicheLabel}
-                </span>
+                    {/* Botón Central Play */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center text-white shadow-2xl active:scale-90 transition-transform">
+                        <Play className="w-6 h-6 fill-white translate-x-0.5" />
+                      </div>
+                    </div>
+
+                    {/* Badges superiores */}
+                    <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-black/75 backdrop-blur-md text-white border border-neutral-700">
+                        {video.platform === 'tiktok' ? (
+                          <><TikTokIcon className="w-3 h-3 text-cyan-400" /> TikTok</>
+                        ) : (
+                          <><InstagramIcon className="w-3 h-3 text-pink-400" /> Reel</>
+                        )}
+                      </span>
+
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 backdrop-blur-md text-white border border-white/20">
+                        {video.nicheLabel}
+                      </span>
+                    </div>
+
+                    {/* Métricas inferiores */}
+                    <div className="absolute bottom-3 inset-x-3 flex items-center justify-between text-xs text-white font-mono">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1 font-bold">
+                          <Eye className="w-3.5 h-3.5 text-cyan-400" /> {video.viewsCount}
+                        </span>
+                        <span className="flex items-center gap-1 font-bold">
+                          <Heart className="w-3.5 h-3.5 text-pink-400" /> {video.likesCount}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-neutral-300 font-sans">@{video.creator}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center text-white shadow-xl group-hover:scale-110 transition-transform">
-                  <Play className="w-5 h-5 fill-white translate-x-0.5" />
-                </div>
-              </div>
+              {/* Botón para detener si está reproduciendo */}
+              {isPlaying && (
+                <button
+                  type="button"
+                  onClick={() => togglePlayInline(video.id)}
+                  className="w-full py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-semibold flex items-center justify-center gap-1.5 border-t border-neutral-700"
+                >
+                  <X className="w-3.5 h-3.5" /> Pausar y cerrar reproductor
+                </button>
+              )}
 
-              {/* Metrics Bottom */}
-              <div className="absolute bottom-3 inset-x-3 flex items-center justify-between text-xs font-mono text-white">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1 font-bold">
-                    <Eye className="w-3.5 h-3.5 text-cyan-400" /> {video.viewsCount}
-                  </span>
-                  <span className="flex items-center gap-1 font-bold">
-                    <Heart className="w-3.5 h-3.5 text-pink-400" /> {video.likesCount}
-                  </span>
-                </div>
-                <span className="text-[11px] text-neutral-300 font-sans">@{video.creator}</span>
-              </div>
-            </div>
-
-            {/* Card Content & Hook Breakdown */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
+              {/* Datos & Desglose de Gancho (Hook) */}
+              <div className="p-4 space-y-3">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span className="text-xs font-semibold text-cyan-400">
+                  <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
                     {video.pillarLabel}
                   </span>
                 </div>
 
-                <h3 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-2">
+                <h3 className="text-sm font-bold text-white line-clamp-2">
                   {video.title}
                 </h3>
 
-                {/* Hook Box */}
-                <div className="p-3 rounded-2xl bg-black/50 border border-neutral-800 text-xs space-y-1.5">
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-amber-400 flex items-center gap-1">
+                {/* Caja de Hook */}
+                <div className="p-3 rounded-xl bg-black/50 border border-neutral-800 text-xs space-y-1.5">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400 block">
                     ⚡ Gancho 0 a 3s ({video.hook0to3s.hookType}):
-                  </div>
-                  <p className="font-semibold text-white italic">
+                  </span>
+                  <p className="font-semibold text-white italic text-xs leading-snug">
                     "{video.hook0to3s.hookText}"
                   </p>
                   <p className="text-[11px] text-neutral-400 leading-relaxed pt-1">
-                    💡 <strong>Por qué funcionó:</strong> {video.hook0to3s.whyItHooked}
+                    💡 <strong>Por qué se viralizó:</strong> {video.hook0to3s.whyItHooked}
                   </p>
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="pt-2 grid grid-cols-2 gap-2">
+                {/* Botón Desplegable de Adaptación a Mi Marca */}
                 <button
                   type="button"
-                  onClick={() => handleOpenModal(video)}
-                  className="py-2.5 px-3 rounded-xl bg-neutral-800 hover:bg-neutral-700/80 text-white text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-95 transition-all"
-                >
-                  <Play className="w-3.5 h-3.5 fill-white" />
-                  Ver en Vivo
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleOpenModal(video)}
-                  className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-md shadow-cyan-950/40"
+                  onClick={() => toggleRemix(video.id)}
+                  className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all ${
+                    isRemixOpen
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-md shadow-cyan-950/40'
+                  }`}
                 >
                   <Zap className="w-3.5 h-3.5 fill-white" />
-                  Adaptar a Mi Marca
+                  <span>{isRemixOpen ? 'Ocultar Adaptador' : 'Adaptar a Mi Marca'}</span>
+                  {isRemixOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Modal Reproductor 9:16 + Generador de Remix */}
-      {activeVideoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl bg-neutral-900 border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[92vh]">
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setActiveVideoModal(null)}
-              className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center border border-neutral-700 active:scale-90 transition-transform"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            {/* Columna Izquierda: Reproductor Smartphone 9:16 */}
-            <div className="md:w-[380px] bg-black p-4 flex flex-col items-center justify-center shrink-0 border-b md:border-b-0 md:border-r border-neutral-800">
-              <div className="w-full max-w-[280px] aspect-[9/16] rounded-2xl overflow-hidden bg-neutral-950 relative border border-neutral-800 shadow-2xl">
-                {activeVideoModal.videoUrl ? (
-                  <video
-                    src={activeVideoModal.videoUrl}
-                    controls
-                    autoPlay
-                    loop
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <iframe
-                    src={activeVideoModal.embedUrl}
-                    className="w-full h-full border-0"
-                    allowFullScreen
-                    scrolling="no"
-                  />
-                )}
-              </div>
-
-              <div className="w-full max-w-[280px] mt-3 flex items-center justify-between text-xs text-neutral-400 font-mono">
-                <span>@{activeVideoModal.creator}</span>
-                <span className="text-cyan-400 font-bold">{activeVideoModal.viewsCount} reproducciones</span>
-              </div>
-            </div>
-
-            {/* Columna Derecha: Análisis & Adaptador Instantáneo */}
-            <div className="flex-1 p-6 overflow-y-auto space-y-5">
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-2">
-                  {activeVideoModal.pillarLabel}
-                </span>
-                <h3 className="text-xl font-bold text-white">
-                  {activeVideoModal.title}
-                </h3>
-              </div>
-
-              {/* Hook breakdown */}
-              <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-2">
-                <div className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                  ⚡ Hook Analizado (0-3s):
-                </div>
-                <div className="text-sm font-semibold text-white italic">
-                  "{activeVideoModal.hook0to3s.hookText}"
-                </div>
-                <p className="text-xs text-neutral-400 leading-relaxed">
-                  {activeVideoModal.hook0to3s.whyItHooked}
-                </p>
-              </div>
-
-              {/* Interactive Remix Generator */}
-              <div className="p-4 rounded-2xl bg-gradient-to-b from-purple-950/20 to-neutral-950 border border-purple-900/40 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-purple-400" />
-                  <h4 className="text-sm font-bold text-white">
-                    Adaptar esta fórmula viral a mi producto/servicio
-                  </h4>
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={userProductName}
-                    onChange={(e) => setUserProductName(e.target.value)}
-                    placeholder="Ej: Curso de inglés, Velas aromáticas, Agencia SEO..."
-                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-neutral-700 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-purple-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateCustomRemix}
-                    disabled={isGeneratingRemix}
-                    className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
-                  >
-                    <Zap className="w-3.5 h-3.5 fill-white" />
-                    Adaptar
-                  </button>
-                </div>
-
-                {generatedScript && (
-                  <div className="p-3.5 rounded-xl bg-purple-950/30 border border-purple-800/40 text-xs space-y-2.5 animate-in fade-in duration-200">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-300 block mb-0.5">
-                        Tu Frase de Gancho para decir a cámara:
-                      </span>
-                      <p className="text-sm font-bold text-white italic">
-                        {generatedScript.hook}
-                      </p>
+                {/* Formulario y Guión de Adaptación Inline */}
+                {isRemixOpen && (
+                  <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/50 space-y-2.5 animate-in fade-in duration-200">
+                    <div className="text-[11px] font-bold text-purple-300">
+                      Adaptar esta estructura a lo que vendés:
                     </div>
 
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">
-                        Guión escena por escena:
-                      </span>
-                      {generatedScript.steps.map((st, idx) => (
-                        <p key={idx} className="text-neutral-300 text-xs">
-                          {st}
-                        </p>
-                      ))}
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={userProductName}
+                        onChange={(e) => setUserProductName(e.target.value)}
+                        placeholder="Nombre de tu producto o servicio..."
+                        className="flex-1 px-3 py-2 rounded-lg bg-black/60 border border-purple-700/60 text-xs text-white placeholder-neutral-500 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleGenerateCustomRemix(video)}
+                        className="px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shrink-0"
+                      >
+                        Crear
+                      </button>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={copyScriptToClipboard}
-                      className="mt-2 w-full py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-                    >
-                      {copied ? (
-                        <><Check className="w-3.5 h-3.5 text-emerald-400" /> Copiado al portapapeles</>
-                      ) : (
-                        <><Copy className="w-3.5 h-3.5" /> Copiar guión adaptado</>
-                      )}
-                    </button>
+                    {generatedScript && (
+                      <div className="pt-2 space-y-2 border-t border-purple-800/40 text-xs">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-purple-300 block">
+                            Tu Frase de Gancho (Decí esto a cámara):
+                          </span>
+                          <p className="font-bold text-white italic text-xs mt-0.5">
+                            {generatedScript.hook}
+                          </p>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-neutral-400 block">
+                            Guión paso a paso:
+                          </span>
+                          {generatedScript.steps.map((st, i) => (
+                            <p key={i} className="text-neutral-300 text-[11px]">
+                              {st}
+                            </p>
+                          ))}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={copyScriptToClipboard}
+                          className="w-full py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-medium flex items-center justify-center gap-1.5"
+                        >
+                          {copied ? (
+                            <><Check className="w-3.5 h-3.5 text-emerald-400" /> Copiado</>
+                          ) : (
+                            <><Copy className="w-3.5 h-3.5" /> Copiar Guión</>
+                          )}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-
             </div>
-          </div>
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

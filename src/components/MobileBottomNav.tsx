@@ -20,8 +20,8 @@ export function MobileBottomNav({ activeTab, setActiveTab }: MobileBottomNavProp
   ];
 
   return (
-    <div className="md:hidden fixed bottom-6 left-4 right-4 z-50">
-      <div className="max-w-xs mx-auto bg-white/80 backdrop-blur-xl border border-black/5 rounded-full p-1.5 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.1)] flex items-center justify-between relative">
+    <div className="md:hidden fixed bottom-2 inset-x-3 z-50 pointer-events-none">
+      <div className="max-w-md mx-auto bg-neutral-900/95 backdrop-blur-2xl border border-neutral-800/90 rounded-2xl p-1 shadow-2xl flex items-center justify-between relative pointer-events-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -29,18 +29,18 @@ export function MobileBottomNav({ activeTab, setActiveTab }: MobileBottomNavProp
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 z-10 btn-press"
+              className="relative flex-1 flex flex-col items-center justify-center py-1.5 z-10 btn-press"
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {isActive && (
                 <motion.div
                   layoutId="mobile-nav-pill"
-                  className="absolute inset-0 bg-watermelon-500 rounded-full shadow-sm"
+                  className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl shadow-md"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
-              <Icon className={`w-5 h-5 relative z-10 transition-colors duration-200 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-              <span className={`text-[10px] mt-1 relative z-10 font-medium transition-colors duration-200 ${isActive ? 'text-white' : 'text-slate-400'}`}>
+              <Icon className={`w-4 h-4 relative z-10 transition-colors duration-200 ${isActive ? 'text-white' : 'text-neutral-400'}`} />
+              <span className={`text-[10px] mt-0.5 relative z-10 font-semibold tracking-tight transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-neutral-400'}`}>
                 {tab.label}
               </span>
             </button>
