@@ -40,6 +40,18 @@ export interface PillarVideoItem {
   pillar: ContentPillarType;
   pillarLabel: string; // "Entretenimiento (Alcance)", "Educación (Valor)", etc.
   title: string;
+  referenceVideo?: {
+    platform: 'tiktok' | 'instagram';
+    title: string;
+    creator: string;
+    views: string;
+    likes: string;
+    videoUrl?: string;
+    embedUrl?: string;
+    coverUrl: string;
+    whyItWorked: string;
+    hookExplanation: string;
+  };
   hook0to3s: {
     spokenText: string;
     visualAction: string;

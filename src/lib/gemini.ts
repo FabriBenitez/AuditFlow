@@ -8,6 +8,7 @@ import {
   ArchetypeProfile, 
   ForensicDiagnosis,
   FourPillarsPlan,
+  ContentPillarType,
   RawIdeaInput,
   RefinedIdeaKit,
   MicroClipTemplate,
@@ -1232,30 +1233,91 @@ Genera ÚNICAMENTE un objeto JSON válido con esta estructura:
         id: 'pill-ent',
         pillar: 'entertainment',
         pillarLabel: '1. Entretenimiento (Alcance Masivo)',
+        referenceVideo: getBenchmarkVideoForPillar('entertainment'),
         ...parsed.entertainment
       },
       education: {
         id: 'pill-edu',
         pillar: 'education',
         pillarLabel: '2. Educación (Autoridad y Valor)',
+        referenceVideo: getBenchmarkVideoForPillar('education'),
         ...parsed.education
       },
       storytelling: {
         id: 'pill-sto',
         pillar: 'storytelling',
         pillarLabel: '3. Narración (Confianza y Conexión)',
+        referenceVideo: getBenchmarkVideoForPillar('storytelling'),
         ...parsed.storytelling
       },
       conversion: {
         id: 'pill-con',
         pillar: 'conversion',
         pillarLabel: '4. Conversión (Venta y Monetización)',
+        referenceVideo: getBenchmarkVideoForPillar('conversion'),
         ...parsed.conversion
       }
     };
   } catch (err) {
     console.warn('Fallback 4 Pilares activado:', err);
     return getFallbackFourPillarsPlan(input);
+  }
+}
+
+export function getBenchmarkVideoForPillar(pillar: ContentPillarType) {
+  switch (pillar) {
+    case 'entertainment':
+      return {
+        platform: 'tiktok' as const,
+        title: 'Reto de Escaneo Visual & Gamificación (2.4M vistas)',
+        creator: 'tiktok_viral',
+        views: '2.4M',
+        likes: '390k',
+        videoUrl: '/videos/pillar-entertainment.mp4',
+        embedUrl: 'https://www.tiktok.com/embed/v2/7106594312292453675',
+        coverUrl: 'https://images.unsplash.com/photo-1612287233202-094e9f743ee8?auto=format&fit=crop&w=600&q=80',
+        whyItWorked: 'Retención de 140%: Desafío visual en los primeros 2 segundos que fuerza al usuario a reproducir 3 veces el video.',
+        hookExplanation: 'Frase gancho: "¿Cuántos detalles ocultos podés encontrar antes de que termine el audio?"'
+      };
+    case 'education':
+      return {
+        platform: 'instagram' as const,
+        title: 'El Atajo Secreto que el 95% Desconoce (1.8M vistas)',
+        creator: 'growth.scale',
+        views: '1.8M',
+        likes: '210k',
+        videoUrl: '/videos/pillar-education.mp4',
+        embedUrl: 'https://www.instagram.com/reel/C_q8XqXsq7c/embed/captioned/',
+        coverUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80',
+        whyItWorked: 'Alto ratio de guardados: Ataca el dolor de perder horas de trabajo con una demostración paso a paso en pantalla.',
+        hookExplanation: 'Frase gancho: "Si todavía hacés esto manual en 2026, estás perdiendo 3 horas por día..."'
+      };
+    case 'storytelling':
+      return {
+        platform: 'tiktok' as const,
+        title: 'Historia Real del Fundador: De la Crisis al Éxito (940k vistas)',
+        creator: 'founder.story',
+        views: '940k',
+        likes: '125k',
+        videoUrl: '/videos/pillar-storytelling.mp4',
+        embedUrl: 'https://www.tiktok.com/embed/v2/7106594312292453675',
+        coverUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80',
+        whyItWorked: 'Conexión humana profunda: El creador muestra su vulnerabilidad y el momento en que casi renuncia.',
+        hookExplanation: 'Frase gancho: "Mi papá me dijo que no renunciara a mi trabajo. Hoy cumplimos 1 año."'
+      };
+    case 'conversion':
+      return {
+        platform: 'tiktok' as const,
+        title: 'Prueba de Choque y Demostración Irrefutable (3.6M vistas)',
+        creator: 'gadgetarmor',
+        views: '3.6M',
+        likes: '480k',
+        videoUrl: '/videos/pillar-conversion.mp4',
+        embedUrl: 'https://www.tiktok.com/embed/v2/7106594312292453675',
+        coverUrl: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80',
+        whyItWorked: 'Demostración de alto riesgo percibido en 1.5 segundos que elimina cualquier objeción de compra.',
+        hookExplanation: 'Frase gancho: "Tiré mi celular desde 2 metros de altura para comprobar si esto es real o humo."'
+      };
   }
 }
 
@@ -1274,6 +1336,7 @@ function getFallbackFourPillarsPlan(input: ProductInput): FourPillarsPlan {
       id: 'pill-ent',
       pillar: 'entertainment',
       pillarLabel: '1. Entretenimiento (Alcance Masivo)',
+      referenceVideo: getBenchmarkVideoForPillar('entertainment'),
       title: `El error que el 90% comete con ${name}`,
       hook0to3s: {
         spokenText: `"Si todavía hacés esto en 2026, estás perdiendo plata todos los días."`,
@@ -1304,6 +1367,7 @@ function getFallbackFourPillarsPlan(input: ProductInput): FourPillarsPlan {
       id: 'pill-edu',
       pillar: 'education',
       pillarLabel: '2. Educación (Autoridad y Valor)',
+      referenceVideo: getBenchmarkVideoForPillar('education'),
       title: `3 reglas no negociables de ${name}`,
       hook0to3s: {
         spokenText: `"Acá tenés la fórmula exacta para resolver esto en menos de 2 minutos."`,
@@ -1332,6 +1396,7 @@ function getFallbackFourPillarsPlan(input: ProductInput): FourPillarsPlan {
       id: 'pill-sto',
       pillar: 'storytelling',
       pillarLabel: '3. Narración (Confianza y Conexión)',
+      referenceVideo: getBenchmarkVideoForPillar('storytelling'),
       title: `Por qué creé ${name} (La historia sin filtro)`,
       hook0to3s: {
         spokenText: `"Casi nadie sabe esto, pero hace unos meses estuve a punto de mandar todo al diablo."`,
@@ -1360,6 +1425,7 @@ function getFallbackFourPillarsPlan(input: ProductInput): FourPillarsPlan {
       id: 'pill-con',
       pillar: 'conversion',
       pillarLabel: '4. Conversión (Venta y Monetización)',
+      referenceVideo: getBenchmarkVideoForPillar('conversion'),
       title: `Cómo conseguir ${name} antes de que se agote`,
       hook0to3s: {
         spokenText: `"Si estabas buscando una solución definitiva para esto, tenés que ver esto antes de que cerremos cupos."`,
