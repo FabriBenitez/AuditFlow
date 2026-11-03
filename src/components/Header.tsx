@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Video, BarChart3, CheckSquare, FileText } from 'lucide-react';
+import { Video, BarChart3, CheckSquare, FileText, Flame } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface HeaderProps {
-  activeTab: 'studio' | 'audit' | 'profile' | 'tracker' | 'doc';
-  setActiveTab: (tab: 'studio' | 'audit' | 'profile' | 'tracker' | 'doc') => void;
+  activeTab: 'radar' | 'studio' | 'audit' | 'profile' | 'tracker' | 'doc';
+  setActiveTab: (tab: 'radar' | 'studio' | 'audit' | 'profile' | 'tracker' | 'doc') => void;
 }
 
 export function Header({ activeTab, setActiveTab }: HeaderProps) {
   const navItems = [
+    { id: 'radar' as const, label: 'Radar Viral', icon: Flame, badge: 'EN VIVO' },
     { id: 'studio' as const, label: 'Studio 2.0', icon: Video },
     { id: 'audit' as const, label: 'Auditoría CQS', icon: BarChart3 },
     { id: 'profile' as const, label: 'Arquetipos', icon: CheckSquare },
@@ -66,6 +67,11 @@ export function Header({ activeTab, setActiveTab }: HeaderProps) {
                 <span className={`relative z-10 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>
                   {item.label}
                 </span>
+                {item.badge && (
+                  <span className="relative z-10 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-watermelon-500/15 text-watermelon-600">
+                    {item.badge}
+                  </span>
+                )}
               </button>
             );
           })}

@@ -434,3 +434,26 @@ export interface VideoCreativeAudit {
   };
 }
 
+export interface ViralRecommendedVideo {
+  id: string;
+  platform: VideoPlatform;
+  title: string;
+  creator: string;
+  videoUrl?: string;
+  embedUrl?: string;
+  coverUrl: string;
+  pillar: 'entertainment' | 'education' | 'storytelling' | 'conversion';
+  pillarLabel: string;
+  niche: BusinessArchetype;
+  nicheLabel: string;
+  viewsCount: string;
+  likesCount: string;
+  hook0to3s: {
+    hookText: string;
+    hookType: string;
+    whyItHooked: string;
+  };
+  keyTakeaway: string;
+  remixFormula: string;
+}
+

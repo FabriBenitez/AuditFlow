@@ -10,11 +10,12 @@ import { ArchetypeScreen } from '@/components/profile/ArchetypeScreen';
 import { AuditScreen } from '@/components/audit/AuditScreen';
 import { TrackerScreen } from '@/components/tracker/TrackerScreen';
 import { BlueprintDocView } from '@/components/doc/BlueprintDocView';
+import { ViralRadarFeed } from '@/components/radar/ViralRadarFeed';
 import { CommandPalette } from '@/components/CommandPalette';
 import { ProductInput, ShootingKit, FourPillarsPlan } from '@/types';
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<'studio' | 'audit' | 'profile' | 'tracker' | 'doc'>('studio');
+  const [activeTab, setActiveTab] = useState<'radar' | 'studio' | 'audit' | 'profile' | 'tracker' | 'doc'>('radar');
   const [currentPillarsPlan, setCurrentPillarsPlan] = useState<FourPillarsPlan | null>(null);
   const [currentKit, setCurrentKit] = useState<ShootingKit | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +67,11 @@ export default function HomePage() {
             <span>Aviso: {errorMessage} (revisa tu conexión o clave de API)</span>
             <button onClick={() => setErrorMessage(null)} className="font-bold ml-2 hover:opacity-70">×</button>
           </div>
+        )}
+
+        {/* PESTAÑA 0: RADAR VIRAL EN VIVO & RECOMENDACIONES DIRECTAS */}
+        {activeTab === 'radar' && (
+          <ViralRadarFeed />
         )}
 
         {/* PESTAÑA 1: STUDIO ENGINE 2.0 */}

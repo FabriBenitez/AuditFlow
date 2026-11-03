@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Video, BarChart3, CheckSquare, FileText } from 'lucide-react';
+import { Video, BarChart3, CheckSquare, FileText, Flame } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface MobileBottomNavProps {
-  activeTab: 'studio' | 'audit' | 'profile' | 'tracker' | 'doc';
-  setActiveTab: (tab: 'studio' | 'audit' | 'profile' | 'tracker' | 'doc') => void;
+  activeTab: 'radar' | 'studio' | 'audit' | 'profile' | 'tracker' | 'doc';
+  setActiveTab: (tab: 'radar' | 'studio' | 'audit' | 'profile' | 'tracker' | 'doc') => void;
 }
 
 export function MobileBottomNav({ activeTab, setActiveTab }: MobileBottomNavProps) {
   const tabs = [
+    { id: 'radar' as const, label: 'Radar', icon: Flame },
     { id: 'studio' as const, label: 'Studio', icon: Video },
     { id: 'audit' as const, label: 'CQS', icon: BarChart3 },
     { id: 'profile' as const, label: 'Perfil', icon: CheckSquare },
